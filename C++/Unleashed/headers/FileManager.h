@@ -8,12 +8,18 @@
 #include <string>
 #include <fstream>
 #include "Player.h"
+// rapidjson
+#include "document.h"
+#include "writer.h"
+#include "stringbuffer.h"
 
 class DataManager
 {
 public:
-	void SaveData(PlayerData* playerData); // Save data func
-	int DeleteData(); // Delete data func
-	void LoadData(PlayerData* data); // Load data func
+	void SaveData(PlayerData& player);
+	int DeleteData(PlayerData& data); // Delete data func
+	void LoadData(PlayerData& data);
+
+	std::string playerFilePath = "PlayerInfo.txt";
 };
 #endif // FILEMANAGER_H

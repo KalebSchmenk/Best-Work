@@ -4,9 +4,12 @@ using UnityEngine;
 
 public class ObjectiveBase : MonoBehaviour
 {
+    [Header("Base Objective Settings")]
     [SerializeField] public int order = 1; // Order of objective
 
     [SerializeField] private string objectiveName; // Objective name
+
+    public string ObjectiveDescription;
 
     protected bool isActive = false; // Is this objective active flag
 
@@ -18,8 +21,14 @@ public class ObjectiveBase : MonoBehaviour
         return this;
     }
 
+    // Virtual func for if the objective is fauled
+    public virtual ObjectiveBase FailedObjective()
+    {
+        return this;
+    }
+
     // On objective complete, inform zone manager
-    public void FinishObjective()
+    public virtual void FinishObjective()
     {
         isActive = false;
         zoneManager.ObjectiveComplete(this);

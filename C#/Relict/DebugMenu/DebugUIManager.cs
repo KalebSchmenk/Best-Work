@@ -1,3 +1,4 @@
+using Cinemachine;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -93,6 +94,10 @@ public class DebugUIManager : MonoBehaviour
     [Header("Other Panel Scroll Refs")]
     public GameObject contentObj;
     public GameObject contentObjPrefab;
+    public TMP_Dropdown difficultyDropdown;
+
+    [Header("Spawnable Enemies")]
+    public List<GameObject> spawnableEnemies = new List<GameObject>();
 
     public delegate void ResetMajorCards();
     public static ResetMajorCards ResetAllMajorCards;
@@ -112,6 +117,8 @@ public class DebugUIManager : MonoBehaviour
     private int zoneIndex = -1;
     [SerializeField] private List<GameObject> zoneSelectedList = new List<GameObject>();
 
+    // God mode health save
+    private int initHealth;
 
     private void Start()
     {
@@ -121,12 +128,18 @@ public class DebugUIManager : MonoBehaviour
 
     private void Update()
     {
+        if (Input.GetKeyUp(KeyCode.K))
+        {
+            LevelManager.instance.NextLevel();
+        }
+
+
         if (Input.GetKeyDown(KeyCode.BackQuote))
         {
-            if (!pauseMenu.currentPanel.Equals("InGame") || tarotReadingManager.tarotReadingMenu.activeSelf) return;
-
             if (canvas.enabled)
             {
+                GameManager.instance.isMenuOpen = false;
+
                 canvas.enabled = false;
                 defaultMenu.SetActive(false);
                 CloseDebugMenu();
@@ -143,6 +156,12 @@ public class DebugUIManager : MonoBehaviour
             }
             else
             {
+                if (GameManager.instance.isMenuOpen) return;
+
+                GameManager.instance.isMenuOpen = true;
+
+                difficultyDropdown.value = (int)GameManager.instance.GameDifficulty;
+
                 UpdateControllers();
                 canvas.enabled = true;
                 defaultMenu.SetActive(true);
@@ -252,7 +271,7 @@ public class DebugUIManager : MonoBehaviour
 
 
         pentTier.text = "Level: " + pentCardScript.currentTier;
-        pentStat.text = "Current currency drop rate: " + playerStats.CurrencyDropRate.Value;
+        pentStat.text = "Current minor card drop rate: " + playerStats.MinorArcanaDropRate.Value;
         discountOnPurchase.text = "Discount on purchase: " + playerStats.DiscountOnPurchase.Value;
         moneyDoubleChance.text = "Chance money doubling: " + playerStats.ChanceToDoubleMoney.Value;
     }
@@ -443,7 +462,111 @@ public class DebugUIManager : MonoBehaviour
             scrollItem.effectable = effectable;
             scrollItem.effectableName.text = effectable.ToString() + " " + i;
             scrollItem.effectableName.text += " - " + Vector3.Distance(effectableObj.transform.position, player.transform.position).ToString("0.00");
+            i++;
         }
+    }
+
+    // Gets all enemies and kills them
+    public void PurgeEnemies()
+    {
+        var damageableArray = FindObjectsOfType<MonoBehaviour>().OfType<ITakeDamage>();
+
+        foreach (ITakeDamage damageable in damageableArray)
+        {
+            MonoBehaviour mono = damageable as MonoBehaviour;
+            GameObject damageableObj = mono.gameObject;
+
+            if (damageableObj.CompareTag("Enemy"))
+            {
+                damageable.TakeDamage(damageableObj.transform.position, Color.magenta, float.MaxValue, false);
+            }
+        }
+    }
+
+    // Toggles god mode on and off
+    public void GodModeToggle(bool toggle)
+    {
+        PlayerStats playerStats = player.GetComponent<PlayerStats>();
+
+        if (toggle) // Turn on
+        {
+            initHealth = (int)playerStats.MaxHP.Value;
+            playerStats.MaxHP.BaseValue = int.MaxValue;
+            playerStats.HP.currentValue = int.MaxValue - 1;
+        }
+        else // Turn off
+        {
+            playerStats.MaxHP.BaseValue = initHealth - 2; // why do i have to minus 2 here? i have no idea... Will be incorrect if not done
+            playerStats.HP.currentValue = playerStats.MaxHP.BaseValue;
+        }
+    }
+
+    // Warps to chariot and enables it
+    public void WarpToChariot()
+    {
+        ZoneManager zoneManager = GameObject.FindGameObjectWithTag("ZoneManager").GetComponent<ZoneManager>();
+        PlayerController playerController = player.GetComponent<PlayerController>();
+        CharacterController characterController = player.GetComponent<CharacterController>();
+        CinemachineVirtualCamera cam = GameManager.instance.cinemachineCam.GetComponent<CinemachineVirtualCamera>();
+
+        zoneManager.chariot.SetActive(true);
+
+        playerController.enabled = false;
+        characterController.enabled = false;
+
+        var oldPlayerPos = player.transform.position;
+        player.transform.position = zoneManager.chariot.transform.position + (Vector3.up * 15f);
+        cam.OnTargetObjectWarped(player.transform, zoneManager.chariot.transform.position - oldPlayerPos);
+
+        playerController.enabled = true;
+        characterController.enabled = true;
+    }
+
+    // Warps to nearest enemy
+    public void WarpToNearestEnemy()
+    {
+        var damageableArray = FindObjectsOfType<MonoBehaviour>().OfType<ITakeDamage>();
+        List<GameObject> enemyList = new List<GameObject>();
+
+        foreach (ITakeDamage damageable in damageableArray)
+        {
+            MonoBehaviour mono = damageable as MonoBehaviour;
+            GameObject damageableObj = mono.gameObject;
+
+            if (damageableObj.CompareTag("Enemy"))
+            {
+                if (damageableObj.TryGetComponent<AIDead>(out AIDead aiDead))
+                {
+                    if (aiDead.isDead) continue; // Dont add to loop
+                    enemyList.Add(damageableObj);
+                }
+            }
+        }
+
+        if (enemyList.Count <= 0) return; // Guard clause
+
+        enemyList = enemyList.OrderBy((obj) => (obj.transform.position - player.transform.position).sqrMagnitude).ToList(); // Sort by distance
+
+        PlayerController playerController = player.GetComponent<PlayerController>();
+        CharacterController characterController = player.GetComponent<CharacterController>();
+        CinemachineVirtualCamera cam = GameManager.instance.cinemachineCam.GetComponent<CinemachineVirtualCamera>();
+
+        playerController.enabled = false;
+        characterController.enabled = false;
+
+        var oldPlayerPos = player.transform.position;
+        player.transform.position = enemyList[0].transform.position + (Vector3.up * 15f);
+        cam.OnTargetObjectWarped(player.transform, enemyList[0].transform.position - oldPlayerPos);
+
+        playerController.enabled = true;
+        characterController.enabled = true;
+    }
+
+    // Completes current objective
+    public void CompleteCurrentObjective()
+    {
+        ZoneManager zoneManager = GameObject.FindGameObjectWithTag("ZoneManager").GetComponent<ZoneManager>();
+        if (zoneManager.activeObjective != null) zoneManager.activeObjective.FinishObjective();
     }
 
     // Clears content from effectables scroll list
@@ -537,5 +660,38 @@ public class DebugUIManager : MonoBehaviour
         {
             obj.SetActive(false);
         }
+    }
+
+    // Spawn an enemy
+    public void SpawnEnemy(int index)
+    {
+        GameObject cam = GameObject.FindGameObjectWithTag("MainCamera");
+
+        var rayHit = RayCast(cam.transform.position, cam.transform.forward, Mathf.Infinity);
+
+        if (rayHit.collider != null)
+        {
+            Instantiate(spawnableEnemies[index], rayHit.point, Quaternion.identity);
+        }
+    }
+
+    // Raycast
+    private RaycastHit RayCast(Vector3 from, Vector3 dir, float len)
+    {
+        RaycastHit hit;
+
+        //Debug.DrawLine(from, from + (dir * maxSpawnDistance), UnityEngine.Color.green); // Debug draw
+
+        if (Physics.Raycast(from, dir, out hit, len, -1, QueryTriggerInteraction.Ignore))
+        {
+            return hit;
+        }
+
+        return new RaycastHit();
+    }
+
+    public void ChangeDifficulty(int value)
+    {
+        GameManager.instance.ChangeDifficulty((GameManager.Difficulty)value);
     }
 }

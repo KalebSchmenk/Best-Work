@@ -42,7 +42,10 @@ public class InventoryManager : MonoBehaviour
     public PlayerStats playerStats;
 
     // Flag for if inventory has generated minor cards
-    public bool generatedMinorCards = false;
+    [NonSerialized] public bool generatedMinorCards = false;
+
+    // Flag for if player has fool cards
+    [NonSerialized] public static bool ownsFoolCards = false;
 
     #region Event Subscriptions
     // Add coins on enemy kill func subscription
@@ -61,6 +64,7 @@ public class InventoryManager : MonoBehaviour
     private void Start()
     {
         if (!generatedMinorCards) CreateMinorCards();
+        if (!ownsFoolCards) AddFoolCards();
     }
 
     // Creates all minor cards and adds to inventory
@@ -76,6 +80,19 @@ public class InventoryManager : MonoBehaviour
             minorCardSOs[i] = cardSO;
             minorCards[i] = cardObj.GetComponent<MinorCardBase>();
         }
+    }
+
+    // Adds all fool cards
+    public void AddFoolCards()
+    {
+        var foolCards = DeckManager.instance.GetAllCardsOfArcanaType(MajorCardSO.MajorCardArcanaType.Fool);
+
+        foreach (var foolCard in foolCards)
+        {
+            AddCard(foolCard);
+        }
+
+        ownsFoolCards = true;
     }
 
     // Adds a major card passed in
@@ -534,21 +551,7 @@ public class InventoryManager : MonoBehaviour
 
     // Money Adder
     public void AddCoins(int amountToAdd)
-    {     
-        int randomInt = UnityEngine.Random.Range(1, 100); // Roll chance
-
-        if (randomInt <= playerStats.CurrencyDropRate.Value)
-        {
-            amountToAdd += UnityEngine.Random.Range(2, 4); // Extra Money
-        }
-
-        randomInt = UnityEngine.Random.Range(1, 100); // Roll chance
-
-        if (randomInt <= playerStats.ChanceToDoubleMoney.Value)
-        {
-            amountToAdd *= 2; // Doubled Money
-        }
-
+    {
         playerStats.Cash += amountToAdd;
     }
 }

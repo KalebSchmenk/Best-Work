@@ -20,7 +20,7 @@ public class DamageNumberSpawner : MonoBehaviour
         textMesh.faceColor = color;
         textMesh.fontSize = 7f;
         textMesh.alignment = TextAlignmentOptions.Center;
-        textMesh.text = damage.ToString("#");
+        textMesh.text = damage.ToString("#; #; 0");
 
         
         var mat = obj.GetComponent<MeshRenderer>().material;
@@ -41,7 +41,7 @@ public class DamageNumberSpawner : MonoBehaviour
         var textMesh = obj.AddComponent<TextMeshPro>();
         textMesh.fontSize = 7f;
         textMesh.alignment = TextAlignmentOptions.Center;
-        textMesh.text = damage.ToString("#");
+        textMesh.text = damage.ToString("#; #; 0");
 
         textMesh.font = GameManager.instance.damageNumberFont;
         var mat = obj.GetComponent<MeshRenderer>().material;

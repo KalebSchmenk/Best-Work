@@ -55,6 +55,8 @@ public class DeathFromBelowMajorCard : MajorCardBase
         var spawnedSpikes = Instantiate(spikePrefab, spawnedTargetGroundReticle.transform.position, spawnedTargetGroundReticle.transform.rotation);
 
         DestroyTargetReticle();
+
+        AudioManager.instance.PlaySfx("DeathFromBelow"); // Plays death from below sound
     }
 
     // Spawns target reticle on the ground

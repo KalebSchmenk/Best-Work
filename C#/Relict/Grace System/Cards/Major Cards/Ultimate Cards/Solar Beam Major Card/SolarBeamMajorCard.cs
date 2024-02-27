@@ -20,7 +20,7 @@ public class SolarBeamMajorCard : MajorCardBase
     GameObject cam; // Camera reference
     Coroutine moveTargetReticleCoroutine; // Move Target Reticle Coroutine ref
 
-    public Vector3 VFX_Pos;
+    public Vector3 VFX_Pos; 
     PlayerController playerController; // Player controller script reference
     public AudioClip targetLockedSound; // Target Locked sound effect
 
@@ -51,8 +51,8 @@ public class SolarBeamMajorCard : MajorCardBase
             return;
         }
 
-        SolarBeam();
         Invoke(nameof(SpawnVFX), enableDamageAfterSpawnedIn);
+        SolarBeam();
 
         StartCooldown();
     }
@@ -66,7 +66,7 @@ public class SolarBeamMajorCard : MajorCardBase
         solarBeamController.enableDamageIn = enableDamageAfterSpawnedIn;
         solarBeamController.destroyAfterEnableIn = destroyAfterEnableDamageIn;
 
-        VFX_Pos = spawnedTargetGroundReticle.transform.position;
+        VFX_Pos += spawnedTargetGroundReticle.transform.position;
 
         DestroyTargetReticle();
     }
@@ -102,6 +102,7 @@ public class SolarBeamMajorCard : MajorCardBase
                 if (spawnedTargetGroundReticle == null) SpawnTargetReticle(); // We need it if it doesnt exist
 
                 spawnedTargetGroundReticle.transform.position = rayHit.point;
+
                 var lookRot = rayHit.normal;
                 spawnedTargetGroundReticle.transform.rotation = Quaternion.FromToRotation(spawnedTargetGroundReticle.transform.up, lookRot) * spawnedTargetGroundReticle.transform.rotation;
 
@@ -199,9 +200,7 @@ public class SolarBeamMajorCard : MajorCardBase
 
     public override void SpawnVFX()
     {
-        Vector3 rotation = vfx.gameObject.transform.rotation.eulerAngles;
-        rotation += new Vector3(-90f, 0, 0);
-
-        Instantiate(vfx.gameObject, VFX_Pos, Quaternion.Euler(rotation));
+        Debug.Log(VFX_Pos);
+        Instantiate(vfx.gameObject, VFX_Pos, Quaternion.identity);
     }
 }

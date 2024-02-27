@@ -42,6 +42,8 @@ public class OvertimeMajorCard : MajorCardBase
 
         StartCooldown(); // Ability cooldown
         removeCoroutine = StartCoroutine(RemoveMultipliersIn()); // Cooldown for how long stat bonuses last
+
+        AudioManager.instance.PlaySfx("OvertimeActivate"); // Plays overtime SFX
     }
 
     public override void OnAdd()

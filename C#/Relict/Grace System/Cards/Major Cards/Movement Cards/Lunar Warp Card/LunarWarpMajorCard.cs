@@ -85,6 +85,8 @@ public class LunarWarpMajorCard : MajorCardBase
 
         spawnedDecoy = Instantiate(decoy, player.transform.position, player.transform.rotation).gameObject;
 
+        Destroy(spawnedDecoy, 5);
+
         playerController.PlaySound(warpSound);
 
         LunarWarp();
@@ -106,7 +108,6 @@ public class LunarWarpMajorCard : MajorCardBase
         cam.OnTargetObjectWarped(player.transform, spawnedGhostPlayer.transform.position - oldPlayerPos);
         playerController.enabled = true;
         characterController.enabled = true;
-
     }
 
     // Grabs references when added to player inventory

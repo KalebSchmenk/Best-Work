@@ -5,7 +5,9 @@ using UnityEngine;
 
 public abstract class EnemyBossBaseController : MonoBehaviour, ITakeDamage, IEffectable
 {
-    protected EnemyBossBaseState currentState; // Current boss state
+    [Header("Current State")]
+    public EnemyBossBaseState currentState; // Current boss state
+
     public enum BossStates // Boss states enum
     {
         Idle,

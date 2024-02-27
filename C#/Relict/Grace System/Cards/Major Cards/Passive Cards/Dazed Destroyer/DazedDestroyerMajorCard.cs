@@ -23,7 +23,7 @@ public class DazedDestroyerMajorCard : MajorCardBase
         damageable.AboutToBeDamaged += AddDamage;
     }
 
-    // Remove rotted enemy to our list and subscribe to their about to be damaged event
+    // Remove rotted enemy to our list and unsubscribe from their about to be damaged event
     public void RemoveRottedEnemy(ITakeDamage damageable)
     {
         dazedEnemies.Remove(damageable);

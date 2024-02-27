@@ -5,6 +5,8 @@ using UnityEngine;
 public class GroundSlamMajorCard : MajorCardBase
 {
     public AudioClip slamSound;
+    public AudioClip jumpSound;
+
     public float upForce = 15f;
     public float downforce = 35f;
     public float moveForce = 2.5f;
@@ -71,6 +73,13 @@ public class GroundSlamMajorCard : MajorCardBase
         canSpawnDamageSphere = true;
         playerController.playerVelocity = new Vector3(player.transform.forward.x * moveForce, player.transform.up.y * upForce, player.transform.forward.z * moveForce);
 
+        playerController.animator.SetTrigger("Ground Slam");
+
+        if (jumpSound != null)
+        {
+            playerController.PlaySound(jumpSound); // Plays jump sound
+        }
+
         yield return new WaitForSeconds(waitInAirFor);
 
         StartCoroutine(IsPlayerOnGround());
@@ -85,7 +94,7 @@ public class GroundSlamMajorCard : MajorCardBase
             if (playerController.GetGroundedPlayer()) break;
             yield return null;
         }
-
+        playerController.animator.SetFloat("Speed", 0f);
         if (!canSpawnDamageSphere) yield break; // Guard clause
         playerController.canMove = true;
         SpawnDamageSphere();
@@ -100,7 +109,7 @@ public class GroundSlamMajorCard : MajorCardBase
 
         if (slamSound != null)
         {
-            playerController.PlaySound(slamSound);
+            playerController.PlaySound(slamSound); // Plays slam sound
         }
 
         foreach (Collider collider in hitColliders)

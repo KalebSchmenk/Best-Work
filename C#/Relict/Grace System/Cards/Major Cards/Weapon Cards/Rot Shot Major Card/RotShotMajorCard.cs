@@ -8,6 +8,7 @@ public class RotShotMajorCard : MajorCardBase
     public float damageIncrease = 5f; // Amount to increase damage by
     public float chanceToAddRot = 100f; // Chance to inflict rot
     public StatusEffectData rotStatusEffectData; // Rot status effect data
+    public AudioClip rotShotSound;
 
     // On card add
     public override void OnAdd()
@@ -15,6 +16,7 @@ public class RotShotMajorCard : MajorCardBase
         base.OnAdd();
 
         PlayerEvents.OnBulletHitEnemy += BulletHitEnemy;
+        player.GetComponent<PlayerWeaponController>().SetSound(rotShotSound);
     }
 
     // On card remove
@@ -23,6 +25,7 @@ public class RotShotMajorCard : MajorCardBase
         base.OnRemove();
 
         PlayerEvents.OnBulletHitEnemy -= BulletHitEnemy;
+        player.GetComponent<PlayerWeaponController>().ResetSound();
     }
 
     // When a bullet hits an enemy
@@ -33,6 +36,12 @@ public class RotShotMajorCard : MajorCardBase
         damage += damageIncrease;
 
         print("Rot Shot changing damage to: " + damage);
+
+        if (effectable == null)
+        {
+            print("This enemy does not have the effectable interface, exiting");
+            return;
+        }
 
         foreach (var effect in effectable.statusEffectBases)
         {

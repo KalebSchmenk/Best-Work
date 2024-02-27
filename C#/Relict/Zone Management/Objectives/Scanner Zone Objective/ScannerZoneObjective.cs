@@ -5,14 +5,15 @@ using UnityEngine;
 
 public class ScannerZoneObjective : ObjectiveBase
 {
+    [Header("Wave Settings")]
     public float spawnRandomWaveEvery = 25f; // When to spawn a new random wave
-
-    public float scannerTimer = 10f; // How long scan lasts
-
-    private List<LevelZone.Wave> waves = new List<LevelZone.Wave>(); // List of waves
-
     public List<Transform> spawnPositions = new List<Transform>(); // Where to spawn enemies
 
+    [Header("Scanner Settings")]
+    public float scannerTimer = 10f; // How long scan lasts
+    public ScannerController scannerController; // Reference to scanner in scene
+
+    private List<LevelZone.Wave> waves = new List<LevelZone.Wave>(); // List of waves
     List<GameObject> aliveEnemies = new List<GameObject>(); // Enemies that this zone has spawned and that are alive
 
     #region Event Subscriptions
@@ -39,10 +40,29 @@ public class ScannerZoneObjective : ObjectiveBase
         print("Objective " + this + " was started!");
         isActive = true;
 
+        scannerController.SetAvailable(this);
+        return this;
+    }
+
+    public override void FinishObjective()
+    {
+        base.FinishObjective();
+
+        scannerController.DisableScanner();
+    }
+
+    public override ObjectiveBase FailedObjective()
+    {
+        print(this + " objective failed!");
+        GameManager.instance.UpdateObjective("Scanner destroyed!");
+        GameManager.instance.player.GetComponent<PlayerHealth>().SetPlayerHealth(0);
+        return this;
+    }
+
+    public void StartScanner()
+    {
         StartCoroutine(SpawnRandomWave());
         StartCoroutine(ObjectiveTimer());
-
-        return this;
     }
 
     // Spawns enemy wave
@@ -69,6 +89,14 @@ public class ScannerZoneObjective : ObjectiveBase
                     GameObject spawnedEnemy = Instantiate(enemy.enemyObj, spawnPositions[randomSpawnIndex].position, Quaternion.identity);
                     spawnedEnemy.name += " " + i;
                     aliveEnemies.Add(spawnedEnemy);
+                    AIMain aiMain;
+                    if (spawnedEnemy.TryGetComponent<AIMain>(out aiMain))
+                    {
+                        if (aiMain.targetOverride != spawnedEnemy.transform && !aiMain.targetOverrides.Contains(spawnedEnemy.transform))
+                        {
+                            aiMain.OverrideTarget(scannerController.transform);
+                        }
+                    }
 
                     i++;
                     break;
@@ -106,7 +134,6 @@ public class ScannerZoneObjective : ObjectiveBase
         while (true)
         {
             int randomNum = UnityEngine.Random.Range(0, waves.Count);
-            print(randomNum);
             SpawnWave(waves[randomNum]); // Spawn random wave
             yield return new WaitForSeconds(spawnRandomWaveEvery);
             if (!isActive) break;
@@ -121,14 +148,6 @@ public class ScannerZoneObjective : ObjectiveBase
             scannerTimer -= Time.deltaTime;
             yield return null;
         }
-
-        // Kills all enemies that are left
-        // MAY NOT MAKE RELEASE
-        for (int i = 0; i < aliveEnemies.Count; i++)
-        {
-            Destroy(aliveEnemies[i]);
-        }
-        aliveEnemies.Clear();
 
         FinishObjective();
     }

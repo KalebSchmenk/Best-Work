@@ -14,12 +14,15 @@ public class StrengthsShotMajorCard : MajorCardBase
 
     public StatusEffectData dazedStatusEffectData; // Dazed status effect data
 
+    public AudioClip strengthsShotSound;
+
 
     public override void OnAdd()
     {
         base.OnAdd();
 
         PlayerEvents.OnBulletHitEnemy += BulletHitEnemy;
+        player.GetComponent<PlayerWeaponController>().SetSound(strengthsShotSound);
     }
 
     public override void OnRemove()
@@ -27,6 +30,7 @@ public class StrengthsShotMajorCard : MajorCardBase
         base.OnRemove();
 
         PlayerEvents.OnBulletHitEnemy -= BulletHitEnemy;
+        player.GetComponent<PlayerWeaponController>().ResetSound();
     }
 
     // Bullet obj is reference to the instantiated bullet
@@ -85,21 +89,16 @@ public class StrengthsShotMajorCard : MajorCardBase
 
         var knockbackDir = enemy.transform.position - player.transform.position;
         knockbackDir.y = 0;
-        knockbackDir.Normalize();
 
         yield return new WaitForSeconds(0.05f);
 
         if (enemy == null) yield break;
 
-        float forceMultiplier = 5f;
-        if (enemy.GetComponent<CrabMain>() != null)
-            forceMultiplier = 200f;
-        else if (enemy.GetComponent<EelMain>() != null)
-            forceMultiplier = 5f;
-        else if (enemy.GetComponent<AIMain>() != null)
-            forceMultiplier = 5f;
+        float forceMultiplier = 15f;
 
-        enemy.GetComponent<Rigidbody>().AddForce(knockbackDir * (knockBackForce * forceMultiplier), ForceMode.Impulse);
-        
+        if (enemy.TryGetComponent<AIMain>(out AIMain aiController))
+        {
+            aiController.Launch(knockbackDir.normalized, knockBackForce * forceMultiplier, dazedStatusEffectData.Lifetime);
+        }
     }
 }

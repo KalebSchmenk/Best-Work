@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using TMPro;
 using static ITakeDamage;
+using static GameManager;
 
 public class KorosBossAIController : EnemyBossBaseController
 {
@@ -29,6 +30,9 @@ public class KorosBossAIController : EnemyBossBaseController
     // Health
     [Header("Health Settings")]
     public float maxHealth = 1000f;
+    public float easyHealth = 1250f;
+    public float normalHealth = 1800f;
+    public float hardHealth = 2500;
     public float health;
     public TextMeshProUGUI healthText;
     [SerializeField] private FloatingHealthbar healthbar;
@@ -56,6 +60,7 @@ public class KorosBossAIController : EnemyBossBaseController
     public float dashAttackRotateSpeed = 45f;
     public float dashAttackMoveSpeed = 25.5f;
     public float dashAttackDamageOutput = 250f;
+    public float pushForce = 65f;
 
     [Header("Shockwave Attack Settings")]
     public int shockwaveCount = 3;
@@ -98,17 +103,46 @@ public class KorosBossAIController : EnemyBossBaseController
     public AudioClip ambientSound3;
     public AudioClip deathSound;
 
+    private string ObjectiveText = "Kill Justice!";
 
     public Vector3 startPos;
 
-    
+    private void OnEnable()
+    {
+        GameManager.OnDifficultyChanged += ChangeDifficulty;
+    }
+
+    private void OnDisable()
+    {
+        GameManager.OnDifficultyChanged -= ChangeDifficulty;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
         startPos = transform.position;
 
+        GameManager.instance.UpdateObjective(ObjectiveText);
+
         currentState = this.gameObject.AddComponent<KorosBossWanderState>();
         currentState.EnterState(this);
+
+        // Quick difficulty addition
+        switch (GameManager.instance.GameDifficulty)
+        {
+            case GameManager.Difficulty.Easy:
+                maxHealth = easyHealth;
+                break;
+
+            case GameManager.Difficulty.Normal:
+                maxHealth = normalHealth;
+                break;
+
+            case GameManager.Difficulty.Hard:
+                maxHealth = hardHealth;
+                break;
+        }
+
         health = maxHealth;
         healthText.text = (health.ToString("#") + "/" + maxHealth.ToString("#"));
 
@@ -121,8 +155,34 @@ public class KorosBossAIController : EnemyBossBaseController
 
         PlaySound(spawnSound); // Plays a sound when the boss spawns
 
-        AudioManager.instance.StopMusic("NormalMusic"); // Stops normal music as the boss fight begins
-        AudioManager.instance.PlayMusic("BossMusic"); // Starts boss music as the boss fight begins
+
+        //AudioManager.instance.StopMusic("NormalMusic"); // Stops normal music as the boss fight begins
+        //AudioManager.instance.PlayMusic("BossMusic"); // Starts boss music as the boss fight begins
+    }
+
+    public virtual void ChangeDifficulty(GameManager.Difficulty newDifficulty)
+    {
+        print("In justice change dif");
+        switch (newDifficulty)
+        {
+            case Difficulty.Easy:
+                maxHealth = easyHealth;
+                health = maxHealth;
+                break;
+
+            case Difficulty.Normal:
+                maxHealth = normalHealth;
+                health = maxHealth;
+                break;
+
+            case Difficulty.Hard:
+                maxHealth = hardHealth;
+                health = maxHealth;
+                break;
+        }
+
+        healthbar.UpdateHealthbar(health, maxHealth);
+        healthText.text = (health.ToString("#") + " / " + maxHealth.ToString("#"));
     }
 
     // Update is called once per frame
@@ -156,7 +216,7 @@ public class KorosBossAIController : EnemyBossBaseController
 
             case BossStates.Dead:
                 newState = this.AddComponent<KorosBossDeadState>();
-                AudioManager.instance.StopMusic("BossMusic"); // Stops boss music when boss dies
+                //AudioManager.instance.StopMusic("BossMusic"); // Stops boss music when boss dies
                 break;
 
             default:
@@ -175,14 +235,14 @@ public class KorosBossAIController : EnemyBossBaseController
         if (isDead) 
         {
             health = 0;
-            healthText.text = (health.ToString("#") + "/" + maxHealth.ToString("#"));
+            healthText.text = (health.ToString("#; #; 0") + "/" + maxHealth.ToString("#; #; 0"));
             return;
         }
 
         if (health <= 0)
         {
             health = 0;
-            healthText.text = (health.ToString("#") + "/" + maxHealth.ToString("#"));
+            healthText.text = (health.ToString("#; #; 0") + "/" + maxHealth.ToString("#; #; 0"));
 
             isDead = true;
 
@@ -205,7 +265,7 @@ public class KorosBossAIController : EnemyBossBaseController
         DamageNumberSpawner.SpawnDamageNumber(damageLocation, damage, damageNumberColor);
         health -= damage;
 
-        SpawnVFX();
+        SpawnVFX(damageLocation);
         healthbar.UpdateHealthbar(health, maxHealth);
     }
 
@@ -236,7 +296,7 @@ public class KorosBossAIController : EnemyBossBaseController
             health -= critValue; // Crit damage
         }
 
-        SpawnVFX();
+        SpawnVFX(damageLocation);
         healthbar.UpdateHealthbar(health, maxHealth);
         healthText.text = (health.ToString("#") + " / " + maxHealth.ToString("#"));
     }
@@ -281,9 +341,9 @@ public class KorosBossAIController : EnemyBossBaseController
     }
 
     // Spawns VFX
-    public void SpawnVFX()
+    public void SpawnVFX(Vector3 spawnLocal)
     {
-        Instantiate(HitVFX.gameObject, gameObject.transform.position, Quaternion.identity, transform);
+        Instantiate(HitVFX.gameObject, spawnLocal, Quaternion.identity, transform);
     }
 
     // Spawns enemies
@@ -311,5 +371,15 @@ public class KorosBossAIController : EnemyBossBaseController
     public void PlaySound(AudioClip clip) // Allows the enemy to play sounds
     {
         audioSource.PlayOneShot(clip);
-    } 
+    }
+
+    public IEnumerator Shove(PlayerController controller, GameObject player)
+    {
+        Vector3 shoveDir = (player.transform.position - this.transform.position).normalized;
+        controller.canMove = false;
+        controller.playerVelocity = new Vector3(shoveDir.x * pushForce, 0f, shoveDir.z * pushForce);
+        yield return new WaitForSeconds(1.5f);
+        controller.playerVelocity = Vector3.zero;
+        controller.canMove = true;
+    }
 }

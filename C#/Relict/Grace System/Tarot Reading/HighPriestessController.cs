@@ -38,6 +38,13 @@ public class HighPriestessController : MonoBehaviour, IInteractable
         }
     }
 
+    private void OnDestroy()
+    {
+        PlayerEvents.onInteract -= Interact;
+        interactUIElement.SetActive(false);
+        subbedToInRangeEvent = false;
+    }
+
     // Interact funciton
     public void Interact()
     {

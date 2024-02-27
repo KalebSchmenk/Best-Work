@@ -6,7 +6,8 @@ public class KorosMeteorController : MonoBehaviour
 {
     public float damageOutput = 10f;
     public float speed = 10f;
-
+    
+    
     void Update()
     {
         this.gameObject.transform.Translate(Vector3.down * Time.deltaTime * speed, Space.World);

@@ -11,6 +11,9 @@ public class LunarFlareMajorCard : MajorCardBase
     public float enableDamageAfterSpawnedIn = 1f;
     public float destroyAfterEnableDamageIn = 0.5f;
 
+    public Quaternion VFX_Rotation;
+    
+
     GameObject cam; 
     GameObject spawnedFlareGhost; // Spawned Flare ghost
     Transform bulletSpawnTrans;
@@ -48,7 +51,10 @@ public class LunarFlareMajorCard : MajorCardBase
         lunarFlareController.enableDamageIn = enableDamageAfterSpawnedIn;
         lunarFlareController.destroyAfterEnableIn = destroyAfterEnableDamageIn;
 
+        //SpawnVFX();
         DestroyGhost();
+
+        AudioManager.instance.PlaySfx("LunarFlare"); // Plays lunar flare SFX
     }
 
     // Spawns ghost on the ground
@@ -120,5 +126,11 @@ public class LunarFlareMajorCard : MajorCardBase
         }
 
         return new RaycastHit();
+    }
+
+    public override void SpawnVFX()
+    {
+        Debug.Log("Spawned Biden Blast");
+        Instantiate(vfx.gameObject, player.GetComponent<PlayerWeaponController>().projectileSpawnPosition.position, VFX_Rotation);
     }
 }

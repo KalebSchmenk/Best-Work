@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
-using static UnityEditor.Progress;
 
 public class TarotReadingManager : MonoBehaviour
 {
@@ -15,27 +14,36 @@ public class TarotReadingManager : MonoBehaviour
     [Header("Slot One")]
     public Button majorArcanaSlotOneButton;
     private Image majorArcanaSlotOneImage;
+    public TMP_Text majorArcanaSlotOneNameText;
     [Header("Slot Two")]
     public Button majorArcanaSlotTwoButton;
     private Image majorArcanaSlotTwoImage;
-
-    public GameObject inGamePanel;
-    public GameObject confirmSelectionButton;
+    public TMP_Text majorArcanaSlotTwoNameText;
 
     [Header("")]
+    public GameObject inGamePanel;
+    public GameObject confirmSelectionButton;
+    public TMP_Text selectedMajorArcanaDescription;
+    public TMP_Text selectedMajorArcanaNameText;
+    public string[] dietyDescriptions;
 
+    [Header("")]
     // Minor Arcana Refs
     [Header("Minor Arcana Refs")]
     [Header("Slot One")]
     public Button minorArcanaSlotOneButton;
     private Image minorArcanaSlotOneImage;
+    public TMP_Text minorArcanaSlotOneText;
     [Header("Slot Two")]
     public Button minorArcanaSlotTwoButton;
     private Image minorArcanaSlotTwoImage;
+    public TMP_Text minorArcanaSlotTwoText;
     [Header("Slot Three")]
     public Button minorArcanaSlotThreeButton;
     private Image minorArcanaSlotThreeImage;
+    public TMP_Text minorArcanaSlotThreeText;
     [Header("")]
+    public TMP_Text selectedMinorArcanaDescriptionText;
 
     [Header("Button Highlights")]
     public Image buttonHighlight1;
@@ -50,6 +58,7 @@ public class TarotReadingManager : MonoBehaviour
     private MajorCardSO selectedAbilityCard;
     private string selectedMinorCard1;
     private string selectedMinorCard2;
+    private string lastSelectedMinorCardSlot;
 
     #endregion
 
@@ -105,6 +114,7 @@ public class TarotReadingManager : MonoBehaviour
     string minorCardSlotThree = "";
 
     [Header("")]
+    public GameObject openMenu;
     public GameObject tarotReadingMenu;
     public Image selectedGraceCard;
     public Sprite defaultSelection;
@@ -120,6 +130,9 @@ public class TarotReadingManager : MonoBehaviour
     // Starts a tarot reading
     public void StartTarotReading()
     {
+        if (GameManager.instance.isMenuOpen) return; // A menu is already open
+        GameManager.instance.isMenuOpen = true;
+
         PauseTime();
 
         inGamePanel.SetActive(false);
@@ -179,6 +192,8 @@ public class TarotReadingManager : MonoBehaviour
 
         GameManager.instance.currentHighPriestessAnimator.SetBool("Reading", false);
         GameManager.instance.currentHighPriestessAnimator = null;
+
+        GameManager.instance.isMenuOpen = false;
 
         #region Reset_All_Refs
         // Lots of resets here
@@ -256,10 +271,11 @@ public class TarotReadingManager : MonoBehaviour
 
         // Switches that Determine the Major Arcana (The Devil, The Moon, etc.)
         #region Switch_One
+        bool addThe = false;
         switch (availableTypes[slotOneRandom])
         {
             case MajorCardSO.MajorCardArcanaType.Strength:
-                majorArcanaSlotOneImage.sprite = deckManager.strengthCard;
+                majorArcanaSlotOneNameText.text = "Strength";
                 foreach (var item in tarotPool)
                 {
                     if (item.arcanaType == availableTypes[slotOneRandom])
@@ -288,11 +304,12 @@ public class TarotReadingManager : MonoBehaviour
                 {
                     if (item.arcanaType == availableTypes[slotOneRandom])
                     {
+                        addThe = true;
                         slotOnePossibleCards = item.cards;
                         break;
                     }
                 }
-                break; ;
+                break;
 
             case MajorCardSO.MajorCardArcanaType.Sun:
                 majorArcanaSlotOneImage.sprite = deckManager.sunCard;
@@ -300,6 +317,7 @@ public class TarotReadingManager : MonoBehaviour
                 {
                     if (item.arcanaType == availableTypes[slotOneRandom])
                     {
+                        addThe = true;
                         slotOnePossibleCards = item.cards;
                         break;
                     }
@@ -311,6 +329,7 @@ public class TarotReadingManager : MonoBehaviour
                 {
                     if (item.arcanaType == availableTypes[slotOneRandom])
                     {
+                        addThe = true;
                         slotOnePossibleCards = item.cards;
                         break;
                     }
@@ -322,12 +341,23 @@ public class TarotReadingManager : MonoBehaviour
                 {
                     if (item.arcanaType == availableTypes[slotOneRandom])
                     {
+                        addThe = true;
                         slotOnePossibleCards = item.cards;
                         break;
                     }
                 }
                 break;
         }
+
+        if (addThe)
+        {
+            majorArcanaSlotOneNameText.text = "The " + availableTypes[slotOneRandom].ToString();
+        }
+        else
+        {
+            majorArcanaSlotOneNameText.text = availableTypes[slotOneRandom].ToString();
+        }
+        addThe = false;
         #endregion
 
         #region Switch_Two
@@ -363,6 +393,7 @@ public class TarotReadingManager : MonoBehaviour
                 {
                     if (item.arcanaType == availableTypes[slotTwoRandom])
                     {
+                        addThe = true;
                         slotTwoPossibleCards = item.cards;
                         break;
                     }
@@ -375,6 +406,7 @@ public class TarotReadingManager : MonoBehaviour
                 {
                     if (item.arcanaType == availableTypes[slotTwoRandom])
                     {
+                        addThe = true;
                         slotTwoPossibleCards = item.cards;
                         break;
                     }
@@ -386,6 +418,7 @@ public class TarotReadingManager : MonoBehaviour
                 {
                     if (item.arcanaType == availableTypes[slotTwoRandom])
                     {
+                        addThe = true;
                         slotTwoPossibleCards = item.cards;
                         break;
                     }
@@ -397,13 +430,27 @@ public class TarotReadingManager : MonoBehaviour
                 {
                     if (item.arcanaType == availableTypes[slotTwoRandom])
                     {
+                        addThe = true;
                         slotTwoPossibleCards = item.cards;
                         break;
                     }
                 }
                 break;
         }
+
+        if (addThe)
+        {
+            majorArcanaSlotTwoNameText.text = "The " + availableTypes[slotTwoRandom].ToString();
+        }
+        else
+        {
+            majorArcanaSlotTwoNameText.text = availableTypes[slotTwoRandom].ToString();
+        }
+        addThe = false;
         #endregion
+
+        // Updating Text Objects
+        selectedMajorArcanaDescription.text = "";
 
         // Determining what abilities each major card can show
         int graceOneNum;
@@ -548,6 +595,31 @@ public class TarotReadingManager : MonoBehaviour
             buttonHighlight2.gameObject.SetActive(false);
 
             selectedGraceCard.sprite = graceOneMajorCard.cardImage;
+            selectedMajorArcanaNameText.text = majorArcanaSlotOneNameText.text;
+
+            #region description_one_switch
+            switch (majorArcanaSlotOneNameText.text)
+            {
+                case "Strength":
+                    selectedMajorArcanaDescription.text = dietyDescriptions[0];
+                    break;
+                case "Death":
+                    selectedMajorArcanaDescription.text = dietyDescriptions[1];
+                    break;
+                case "The Devil":
+                    selectedMajorArcanaDescription.text = dietyDescriptions[2];
+                    break;
+                case "The Sun":
+                    selectedMajorArcanaDescription.text = dietyDescriptions[3];
+                    break;
+                case "The Moon":
+                    selectedMajorArcanaDescription.text = dietyDescriptions[4];
+                    break;
+                case "The World":
+                    selectedMajorArcanaDescription.text = dietyDescriptions[5];
+                    break;
+            }
+            #endregion
         }
         else // Assume slot 2
         {
@@ -559,6 +631,31 @@ public class TarotReadingManager : MonoBehaviour
             buttonHighlight2.gameObject.SetActive(true);
 
             selectedGraceCard.sprite = graceTwoMajorCard.cardImage;
+            selectedMajorArcanaNameText.text = majorArcanaSlotTwoNameText.text;
+
+            #region description_two_switch
+            switch (majorArcanaSlotTwoNameText.text)
+            {
+                case "Strength":
+                    selectedMajorArcanaDescription.text = dietyDescriptions[0];
+                    break;
+                case "Death":
+                    selectedMajorArcanaDescription.text = dietyDescriptions[1];
+                    break;
+                case "The Devil":
+                    selectedMajorArcanaDescription.text = dietyDescriptions[2];
+                    break;
+                case "The Sun":
+                    selectedMajorArcanaDescription.text = dietyDescriptions[3];
+                    break;
+                case "The Moon":
+                    selectedMajorArcanaDescription.text = dietyDescriptions[4];
+                    break;
+                case "The World":
+                    selectedMajorArcanaDescription.text = dietyDescriptions[5];
+                    break;
+            }
+            #endregion
         }
 
         graceSlotOneName.text = graceOneMajorCard.name;
@@ -632,18 +729,23 @@ public class TarotReadingManager : MonoBehaviour
         {
             case "wands":
                 minorArcanaSlotOneImage.sprite = deckManager.wandsCard;
+                minorArcanaSlotOneText.text = DeckManager.instance.listOfMinorCards[1].cardName;
                 break;
 
             case "pentacles":
                 minorArcanaSlotOneImage.sprite = deckManager.pentaclesCard;
+                minorArcanaSlotOneText.text = DeckManager.instance.listOfMinorCards[3].cardName;
+
                 break;
 
             case "cups":
                 minorArcanaSlotOneImage.sprite = deckManager.cupsCard;
+                minorArcanaSlotOneText.text = DeckManager.instance.listOfMinorCards[2].cardName;
                 break;
 
             case "swords":
                 minorArcanaSlotOneImage.sprite = deckManager.swordsCard;
+                minorArcanaSlotOneText.text = DeckManager.instance.listOfMinorCards[0].cardName;
                 break;
 
             default:
@@ -658,18 +760,22 @@ public class TarotReadingManager : MonoBehaviour
         {
             case "wands":
                 minorArcanaSlotTwoImage.sprite = deckManager.wandsCard;
+                minorArcanaSlotTwoText.text = DeckManager.instance.listOfMinorCards[1].cardName;
                 break;
 
             case "pentacles":
                 minorArcanaSlotTwoImage.sprite = deckManager.pentaclesCard;
+                minorArcanaSlotTwoText.text = DeckManager.instance.listOfMinorCards[3].cardName;
                 break;
 
             case "cups":
                 minorArcanaSlotTwoImage.sprite = deckManager.cupsCard;
+                minorArcanaSlotTwoText.text = DeckManager.instance.listOfMinorCards[2].cardName;
                 break;
 
             case "swords":
                 minorArcanaSlotTwoImage.sprite = deckManager.swordsCard;
+                minorArcanaSlotTwoText.text = DeckManager.instance.listOfMinorCards[0].cardName;
                 break;
 
             default:
@@ -684,18 +790,22 @@ public class TarotReadingManager : MonoBehaviour
         {
             case "wands":
                 minorArcanaSlotThreeImage.sprite = deckManager.wandsCard;
+                minorArcanaSlotThreeText.text = DeckManager.instance.listOfMinorCards[1].cardName;
                 break;
 
             case "pentacles":
                 minorArcanaSlotThreeImage.sprite = deckManager.pentaclesCard;
+                minorArcanaSlotThreeText.text = DeckManager.instance.listOfMinorCards[3].cardName;
                 break;
 
             case "cups":
                 minorArcanaSlotThreeImage.sprite = deckManager.cupsCard;
+                minorArcanaSlotThreeText.text = DeckManager.instance.listOfMinorCards[2].cardName;
                 break;
 
             case "swords":
                 minorArcanaSlotThreeImage.sprite = deckManager.swordsCard;
+                minorArcanaSlotThreeText.text = DeckManager.instance.listOfMinorCards[0].cardName;
                 break;
 
             default:
@@ -704,6 +814,8 @@ public class TarotReadingManager : MonoBehaviour
                 break;
         }
         #endregion
+
+        selectedMinorArcanaDescriptionText.text = "";
     }
 
     // Opens confirmation menu and saves inserted slot for later referencing
@@ -722,15 +834,21 @@ public class TarotReadingManager : MonoBehaviour
     public void SelectMinorCard(int slot) 
     {
         if (selectedAbilityCard == null) return;
-
-        PlaySound(minorcardSound);
+        //PlaySound(minorcardSound);
 
         switch (slot) 
         {
             case 1:
-                if (selectedMinorCard1 == minorCardSlotOne || selectedMinorCard2 == minorCardSlotOne)
+                lastSelectedMinorCardSlot = minorCardSlotOne;
+                if (selectedMinorCard1 == minorCardSlotOne)
                 {
-                    return;
+                    selectedMinorCard1 = null;
+                    minorCardsSelected--;
+                }
+                else if (selectedMinorCard2 == minorCardSlotOne)
+                {
+                    selectedMinorCard2 = null;
+                    minorCardsSelected--;
                 }
                 else if (selectedMinorCard1 == null)
                 {
@@ -748,9 +866,16 @@ public class TarotReadingManager : MonoBehaviour
                 break;
 
             case 2:
-                if (selectedMinorCard1 == minorCardSlotTwo || selectedMinorCard2 == minorCardSlotTwo)
+                lastSelectedMinorCardSlot = minorCardSlotTwo;
+                if (selectedMinorCard1 == minorCardSlotTwo)
                 {
-                    return;
+                    selectedMinorCard1 = null;
+                    minorCardsSelected--;
+                }
+                else if (selectedMinorCard2 == minorCardSlotTwo)
+                {
+                    selectedMinorCard2 = null;
+                    minorCardsSelected--;
                 }
                 else if (selectedMinorCard1 == null)
                 {
@@ -768,9 +893,16 @@ public class TarotReadingManager : MonoBehaviour
                 break;
 
             case 3:
-                if (selectedMinorCard1 == minorCardSlotThree || selectedMinorCard2 == minorCardSlotThree)
+                lastSelectedMinorCardSlot = minorCardSlotThree;
+                if (selectedMinorCard1 == minorCardSlotThree)
                 {
-                    return;
+                    selectedMinorCard1 = null;
+                    minorCardsSelected--;
+                }
+                else if (selectedMinorCard2 == minorCardSlotThree)
+                {
+                    selectedMinorCard2 = null;
+                    minorCardsSelected--;
                 }
                 else if (selectedMinorCard1 == null)
                 {
@@ -786,6 +918,33 @@ public class TarotReadingManager : MonoBehaviour
                     selectedMinorCard2 = minorCardSlotThree;
                 }
                 break;
+        }
+
+        if (lastSelectedMinorCardSlot == selectedMinorCard1 || lastSelectedMinorCardSlot == selectedMinorCard2)
+        {
+            lastSelectedMinorCardSlot.ToLower();
+            switch (lastSelectedMinorCardSlot)
+            {
+                case "swords":
+                    selectedMinorArcanaDescriptionText.text = DeckManager.instance.listOfMinorCards[0].cardDescription;
+                    PlaySound(minorcardSound);// Plays card obtained sound
+                    break;
+
+                case "pentacles":
+                    selectedMinorArcanaDescriptionText.text = DeckManager.instance.listOfMinorCards[3].cardDescription;
+                    PlaySound(minorcardSound);// Plays card obtained sound
+                    break;
+
+                case "wands":
+                    selectedMinorArcanaDescriptionText.text = DeckManager.instance.listOfMinorCards[1].cardDescription;
+                    PlaySound(minorcardSound);// Plays card obtained sound
+                    break;
+
+                case "cups":
+                    selectedMinorArcanaDescriptionText.text = DeckManager.instance.listOfMinorCards[2].cardDescription;
+                    PlaySound(minorcardSound);// Plays card obtained sound
+                    break;
+            }
         }
 
         if (minorCardSlotOne == selectedMinorCard1 || minorCardSlotOne == selectedMinorCard2)
@@ -942,6 +1101,13 @@ public class TarotReadingManager : MonoBehaviour
                 confirmSelectionButton.SetActive(false);
             }
         }
+    }
+
+    public void NextPanel(GameObject panelToOpen)
+    {
+        openMenu.SetActive(false);
+        openMenu = panelToOpen;
+        panelToOpen.SetActive(true);
     }
 
     public void ConfirmSelection()

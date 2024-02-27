@@ -57,7 +57,7 @@ public class BlackHoleMajorCard : MajorCardBase
         }
     }
 
-    // On ability key up do pillar spawn ability and destroy ghost indicator
+    // On ability key up do black hole spawn ability and destroy ghost indicator
     public override void AbilityKeyUp()
     {
         if (GetCooldown() || moveGhostCoroutine == null) return; // Guard clause. If we are cooling down - return. Or if ghost coroutine is empty
@@ -80,7 +80,7 @@ public class BlackHoleMajorCard : MajorCardBase
         StartCooldown();
     }
 
-    // Earthen Pillar ability
+    // Black Hole ability
     private void SummonBlackHole()
     {
         var point = spawnedBlackHoleGhost.transform.position;
@@ -88,6 +88,8 @@ public class BlackHoleMajorCard : MajorCardBase
         DestroyGhost();
 
         Instantiate(blackHole, point, lookRot);
+
+        AudioManager.instance.PlaySfx("BlackHole"); // Plays black hole sound
     }
 
     // Grabs references when added to player inventory

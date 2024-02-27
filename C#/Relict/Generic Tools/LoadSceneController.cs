@@ -5,7 +5,6 @@ using UnityEngine.SceneManagement;
 
 public class LoadSceneController : MonoBehaviour
 {
-    [SerializeField] private int buildIndex;
     [SerializeField] private float loadSceneIn = 2.5f;
 
 
@@ -18,6 +17,6 @@ public class LoadSceneController : MonoBehaviour
     IEnumerator LoadSceneIn()
     {
         yield return new WaitForSeconds(loadSceneIn);
-        SceneManager.LoadScene(buildIndex);
+        LevelManager.instance.NextLevel();
     }
 }

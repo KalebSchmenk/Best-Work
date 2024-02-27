@@ -3,6 +3,8 @@
 
 #include "Dungeon Headers/CaveDungeon.h"
 #include "Item Headers/Items.h"
+#include "Enemy Headers/Enemies.h"
+#include "Duel.h"
 #include <windows.h>
 
 
@@ -22,69 +24,164 @@ bool CaveDungeon::StartDungeon(PlayerObj *player)
 {
 	system("CLS"); // Clear console (Slow)
 	std::cout << "Welcome to the CAVE DUNGEON!\n\n";
+	Sleep(2500);
 
-	// lol
+	SelectDifficulty();
+
+	std::cout << "\n\nYou begin to wander the cave...\n\n";
+	Sleep(2500);
+
+	this->player = player;
+	Duel* duel;
+
 	switch(dungeonDifficulty)
 	{
 		case Easy:
 		{
-			Sleep(1250);
+			Item bone = Item();
+			bone.SetItemName("Bone");
+			bone.SetItemDescription("A skeletal bone");
 
-			std::cout << "\nYou're difficulty level is: EASY\n\n";
-			std::cout << "YOU TOOK 1 DAMAGE!\n\n";
-			player->TakeDamage(1);
+			SkeletonEnemy* enemy = new SkeletonEnemy("Skeleton",10, 1, bone);
 
-			Sleep(1250);
+			duel = new Duel(player, enemy);
+			duel->StartDuel();
 
-			std::cout << "You found 5 gold and a sword!";
-			Coin coins(5);
-			Sword sword;
-			sword.SetItemName("Sword");
-			player->AddItem(coins);
-			player->AddItem(sword);
+			system("CLS"); // Clear console (Slow)
+
+			if (duel->playerWon == false && duel->enemyWon == false)
+			{
+				// Run away
+				std::cout << "You run away!\n\n";
+				Sleep(2500);
+				EndDungeon();
+			}
+			else if (duel->playerWon == true && duel->enemyWon == false)
+			{
+				// Player won
+				std::cout << "You beat the " << enemy->GetName() << "!\n\n";
+
+				Sleep(2500);
+				player->AddItem(enemy->Die());
+				int coins = 3;
+				player->GetPlayerData()->coins.ChangeItemCount(coins);
+
+				std::cout << "You got " << enemy->Die().GetItemCount() << " " << enemy->Die().GetItemName() << "(s)";
+				std::cout << "\n\nand\n\n" << coins << " coins!";
+
+				player->LevelUp();
+
+				Sleep(2500);
+
+				EndDungeon();
+			}
+			else // Assume enemy won
+			{
+				// Enemy won
+				player->PlayerDied();
+				EndDungeon();
+				return false;
+			}
 			break;
 		}
 		case Medium:
 		{
-			Sleep(1250);
+			Sword sword = Sword();
+			sword.SetItemName("Steel Sword");
+			sword.SetItemDescription("A sword made of steel");
+			sword.damageOutput = 8;
 
-			std::cout << "\nYou're difficulty level is: MEDIUM\n\n";
-			std::cout << "YOU TOOK 5 DAMAGE!\n\n";
-			player->TakeDamage(5);
+			SkeletonEnemy* enemy = new SkeletonEnemy("Hardened Skeleton", 15, 2, sword);
 
-			Sleep(1250);
+			duel = new Duel(player, enemy);
+			duel->StartDuel();
 
-			std::cout << "You found 5 gold and a sword!";
-			Coin coins(5);
-			Sword sword;
-			sword.SetItemName("Sword");
-			player->AddItem(coins);
-			player->AddItem(sword);
+			system("CLS"); // Clear console (Slow)
+
+			if (duel->playerWon == false && duel->enemyWon == false)
+			{
+				// Run away
+				std::cout << "You run away!\n\n";
+				Sleep(2500);
+				EndDungeon();
+			}
+			else if (duel->playerWon == true && duel->enemyWon == false)
+			{
+				// Player won
+				std::cout << "You beat the " << enemy->GetName() << "!\n\n";
+
+				Sleep(2500);
+				player->GetPlayerData()->playerSword = sword;
+				int coins = 8;
+				player->GetPlayerData()->coins.ChangeItemCount(coins);
+
+				std::cout << "You got " << enemy->Die().GetItemCount() << " " << enemy->Die().GetItemName() + "(s)";
+				std::cout << "\n\nand\n\n";
+				std::cout << coins << " coins!";
+
+				player->LevelUp();
+
+				Sleep(2500);
+
+				EndDungeon();
+			}
+			else // Assume enemy won
+			{
+				// Enemy won
+				player->PlayerDied();
+				EndDungeon();
+				return false;
+			}
 			break;
 		}	
 		case Hard:
 		{
-			Sleep(1250);
+			Item item = Item();
+			item.SetItemName("Legendary Black Orb");
+			item.SetItemDescription("A strange eniminating black orb...");
 
-			std::cout << "\nYou're difficulty level is: HARD\n\n";
-			std::cout << "YOU TOOK 10 DAMAGE!\n\n";
-			bool alive = player->TakeDamage(10);
-			if (!alive) return false;
+			SkeletonEnemy* enemy = new SkeletonEnemy("Armored Skeleton", 20, 4, item);
 
-			Sleep(1250);
+			duel = new Duel(player, enemy);
+			duel->StartDuel();
 
-			std::cout << "You found 5 gold and a sword!\n\n";
-			Sword sword;
-			sword.SetItemName("Iron Sword");
-			player->GetPlayerData()->playerSword = sword;
-			player->GetPlayerData()->coins.ChangeItemCount(5);
+			system("CLS"); // Clear console (Slow)
 
-			Sleep(1250);
+			if (duel->playerWon == false && duel->enemyWon == false)
+			{
+				// Run away
+				std::cout << "You run away!\n\n";
+				Sleep(2500);
+				EndDungeon();
+			}
+			else if (duel->playerWon == true && duel->enemyWon == false)
+			{
+				// Player won
+				std::cout << "You beat the " << enemy->GetName() << "!\n\n";
 
-			std::cout << "You also found a mysterious black orb!\n\n";
-			Item item;
-			item.SetItemName("Black Orb");
-			player->AddItem(item);
+				Sleep(2500);
+				player->AddItem(enemy->Die());
+				int coins = 15;
+				player->GetPlayerData()->coins.ChangeItemCount(coins);
+
+				std::cout << "You got " << enemy->Die().GetItemCount() << " " << enemy->Die().GetItemName() << "(s)";
+				std::cout << "\n\nand\n\n" << coins << " coins!";
+
+				std::cout << "\n\n======Thanks for playing my demo!======\n\n";
+
+				player->LevelUp();
+
+				Sleep(2500);
+
+				EndDungeon();
+			}
+			else // Assume enemy won
+			{
+				// Enemy won
+				player->PlayerDied();
+				EndDungeon();
+				return false;
+			}
 			break;
 		}
 		default:
@@ -93,4 +190,9 @@ bool CaveDungeon::StartDungeon(PlayerObj *player)
 
 	Sleep(2500);
 	return true; // Player survived
+}
+
+bool CaveDungeon::EndDungeon()
+{
+	return (player->GetHealth() <= 0) ? true : false;
 }

@@ -5,6 +5,8 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using TMPro;
 using System.Linq;
+using System;
+using static GameManager;
 
 
 // GameManager
@@ -40,6 +42,39 @@ public class GameManager : MonoBehaviour
     [HideInInspector]
     public Animator currentHighPriestessAnimator;
 
+    public enum Difficulty
+    { 
+        Easy = 0,
+        Normal = 1,
+        Hard = 2
+    }
+
+    private Difficulty difficulty = Difficulty.Normal; // Default normal
+    public delegate void DifficultyChanged(Difficulty newDifficulty);
+    public static DifficultyChanged OnDifficultyChanged;
+
+    // Read only
+    public Difficulty GameDifficulty
+    {
+        get => difficulty;
+        private set => difficulty = value;
+    }
+
+    public enum EnemyType
+    { 
+        Thrall,
+        Crab,
+        Eel,
+        Serpent,
+        Golem,
+        Sprite,
+        Spirit,
+        Frog,
+        Wolf
+    }
+
+    [NonSerialized] public bool isMenuOpen = false; // Flag for if a menu is currently open
+
     private void Awake()
     {
         HandleSingleton();
@@ -50,7 +85,18 @@ public class GameManager : MonoBehaviour
 
     private void Update()
     {
-        //if (player != null) print("Player pos: " + player.transform.position);
+        if (Input.GetKeyUp(KeyCode.F1))
+        {
+            ChangeDifficulty(Difficulty.Easy);
+        }
+        if (Input.GetKeyUp(KeyCode.F2))
+        {
+            ChangeDifficulty(Difficulty.Normal);
+        }
+        if (Input.GetKeyUp(KeyCode.F3))
+        {
+            ChangeDifficulty(Difficulty.Hard);
+        }
     }
 
     private void OnDestroy()
@@ -65,6 +111,8 @@ public class GameManager : MonoBehaviour
 
     private void OnSceneLoad(Scene scene, LoadSceneMode mode)
     {
+        isMenuOpen = false; // If we are loading a new scene, a menu should not be open
+
         HandleSingleton();
         HandleCritSystemReference();
         GetRefs();
@@ -90,7 +138,7 @@ public class GameManager : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player");
         mainCamera = GameObject.FindGameObjectWithTag("MainCamera");
         cinemachineCam = GameObject.FindGameObjectWithTag("FreeCam");
-        //objectiveUI = GameObject.Find("Objective").transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>();
+        objectiveUI = GameObject.Find("Objective").transform.GetChild(0).gameObject.GetComponent<TextMeshProUGUI>();
 
         if (tarotReadingManager == null && player != null) 
             tarotReadingManager = player.transform.parent.transform.GetComponentInChildren<TarotReadingManager>(); // wow
@@ -129,6 +177,15 @@ public class GameManager : MonoBehaviour
     public void BeginTarotReading()
     {
         tarotReadingManager.StartTarotReading();
+    }
+
+    public void ChangeDifficulty(Difficulty newDifficulty)
+    {
+        OnDifficultyChanged?.Invoke(newDifficulty);
+
+        print("Changing difficulty to " + newDifficulty.ToString());
+
+        GameDifficulty = newDifficulty; 
     }
 
     // Saves game data

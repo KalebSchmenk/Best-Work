@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -5,7 +6,7 @@ using UnityEngine;
 
 public class ZoneManager : MonoBehaviour
 {
-    public ObjectiveBase activeObjective; // Current active objective
+    [NonSerialized] public ObjectiveBase activeObjective; // Current active objective
 
     public float startNextObjectiveIn = 3.5f;
 
@@ -15,8 +16,8 @@ public class ZoneManager : MonoBehaviour
 
     private void Start()
     {
-        var objectiveObjs = GameObject.FindGameObjectsWithTag("Objective");
 
+        var objectiveObjs = GameObject.FindGameObjectsWithTag("Objective");
         foreach (var gameObj in objectiveObjs)
         {
             objectives.Add(gameObj.GetComponent<ObjectiveBase>());
@@ -52,6 +53,8 @@ public class ZoneManager : MonoBehaviour
         {
             print("Starting new objective...");
             activeObjective = objectives[0].StartObjective();
+
+            GameManager.instance.UpdateObjective(activeObjective.ObjectiveDescription);
         }
         else
         {

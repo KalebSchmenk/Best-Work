@@ -72,7 +72,8 @@ public class KorosBossAttackState : EnemyBossBaseState
             }
             else
             {
-                SpawnShockwave();
+                //SpawnShockwave();
+                DashAttack();
             }
 
             inAttack = true;
@@ -167,7 +168,7 @@ public class KorosBossAttackState : EnemyBossBaseState
 
         while (true) // Move down to player level
         {
-            print("Dist: " + (this.transform.position.y - spawnAt.y));
+            //print("Dist: " + (this.transform.position.y - spawnAt.y));
             if (this.transform.position.y - spawnAt.y < 1.15f) break;
             transform.Translate(Vector3.down * moveToSpawnSpeed * Time.deltaTime);
             yield return null;
@@ -202,7 +203,7 @@ public class KorosBossAttackState : EnemyBossBaseState
         rb.isKinematic = false;
         Transform playerPos = GameManager.instance.player.transform;
 
-        GetComponentInParent<Animator>().SetTrigger("Dash");
+        GetComponentInChildren<Animator>().SetTrigger("Dash");
 
         PlaySound(controller.dashAttackSound); // Plays dash attack sound
 
@@ -263,7 +264,7 @@ public class KorosBossAttackState : EnemyBossBaseState
                     Vector3 spawnAt = hit.point;
                     spawnAt.y += .75f;
 
-                    GetComponentInParent<Animator>().SetTrigger("Shockwave");
+                    GetComponentInChildren<Animator>().SetTrigger("Shockwave");
                     Instantiate(controller.korosData.attackOnePrefab, spawnAt, Quaternion.identity);
                     spawnedCount++;
                 }
@@ -284,7 +285,11 @@ public class KorosBossAttackState : EnemyBossBaseState
 
         hitSomething = true;
 
-        if (collision.gameObject.CompareTag("Player")) controller.SwitchState(EnemyBossBaseController.BossStates.Wander);
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            controller.StartCoroutine(controller.Shove(collision.gameObject.GetComponent<PlayerController>(), collision.gameObject));
+            controller.SwitchState(EnemyBossBaseController.BossStates.Wander);
+        }
     }
 
     public void PlaySound(AudioClip clip) // Allows the enemy to play sounds

@@ -12,4 +12,7 @@ public class EnemyEvents : MonoBehaviour
 
     public delegate void EnemyDied(GameObject thisEnemy);
     public static EnemyDied OnEnemyDied;
+
+    public delegate void EnemyKnockbacked(GameObject thisEnemy);
+    public static EnemyKnockbacked OnEnemyKnockbacked;
 }

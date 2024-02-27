@@ -45,7 +45,7 @@ public class KorosBossWanderState : EnemyBossBaseState
 
         controller.enteredWanderState++;
 
-        if (controller.enteredWanderState >= 3)
+        if (controller.enteredWanderState >= 2)
         {
             controller.SpawnEnemies();
             controller.enteredWanderState = 0;

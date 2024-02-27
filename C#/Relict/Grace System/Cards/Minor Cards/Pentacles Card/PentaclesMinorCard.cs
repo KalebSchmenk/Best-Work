@@ -9,33 +9,33 @@ public class PentaclesMinorCard : MinorCardBase
 
     #region Modifer Info
     [Header("Tier Modifiers")]
-    [Tooltip("Expecting one modifier to apply to Currency Drop Rate")]
+    [Tooltip("Expecting one modifier to apply to Minor Arcana Drop Rate")]
     public MinorCardModiferContainer.MultiModifer tierOneModifier;
-    [Tooltip("Expecting one modifier to apply to Currency Drop Rate")]
+    [Tooltip("Expecting one modifier to apply to Minor Arcana Drop Rate")]
     public MinorCardModiferContainer.MultiModifer tierTwoModifier;
-    [Tooltip("Expecting one modifier to apply to Currency Drop Rate")]
+    [Tooltip("Expecting one modifier to apply to Minor Arcana Drop Rate")]
     public MinorCardModiferContainer.MultiModifer tierThreeModifier;
-    [Tooltip("Expecting one modifier to apply to Currency Drop Rate")]
+    [Tooltip("Expecting one modifier to apply to Minor Arcana Drop Rate")]
     public MinorCardModiferContainer.MultiModifer tierFourModifier;
-    [Tooltip("Expecting two modifiers. Element 0 will apply to Currency Drop Rate and Element 1 will apply to Discount On Purchase")]
+    [Tooltip("Expecting two modifiers. Element 0 will apply to Minor Arcana Drop Rate and Element 1 will apply to Discount On Purchase")]
     public MinorCardModiferContainer.MultiModifer tierFiveModifier;
-    [Tooltip("Expecting two modifiers. Element 0 will apply to Currency Drop Rate and Element 1 will apply to Discount On Purchase")]
+    [Tooltip("Expecting two modifiers. Element 0 will apply to Minor Arcana Drop Rate and Element 1 will apply to Discount On Purchase")]
     public MinorCardModiferContainer.MultiModifer tierSixModifier;
-    [Tooltip("Expecting two modifiers. Element 0 will apply to Currency Drop Rate and Element 1 will apply to Discount On Purchase")]
+    [Tooltip("Expecting two modifiers. Element 0 will apply to Minor Arcana Drop Rate and Element 1 will apply to Discount On Purchase")]
     public MinorCardModiferContainer.MultiModifer tierSevenModifier;
-    [Tooltip("Expecting two modifiers. Element 0 will apply to Currency Drop Rate and Element 1 will apply to Discount On Purchase")]
+    [Tooltip("Expecting two modifiers. Element 0 will apply to Minor Arcana Drop Rate and Element 1 will apply to Discount On Purchase")]
     public MinorCardModiferContainer.MultiModifer tierEightModifier;
-    [Tooltip("Expecting two modifiers. Element 0 will apply to Currency Drop Rate and Element 1 will apply to Discount On Purchase")]
+    [Tooltip("Expecting two modifiers. Element 0 will apply to Minor Arcana Drop Rate and Element 1 will apply to Discount On Purchase")]
     public MinorCardModiferContainer.MultiModifer tierNineModifier;
-    [Tooltip("Expecting three modifiers. Element 0 will apply to Currency Drop Rate, Element 1 will apply to Discount On Purchase, and Element 2 will apply to Money Doubling Chance")]
+    [Tooltip("Expecting three modifiers. Element 0 will apply to Minor Arcana Drop Rate, Element 1 will apply to Discount On Purchase, and Element 2 will apply to Money Doubling Chance")]
     public MinorCardModiferContainer.MultiModifer tierTenModifier;
-    [Tooltip("Expecting three modifiers. Element 0 will apply to Currency Drop Rate, Element 1 will apply to Discount On Purchase, and Element 2 will apply to Money Doubling Chance")]
+    [Tooltip("Expecting three modifiers. Element 0 will apply to Minor Arcana Drop Rate, Element 1 will apply to Discount On Purchase, and Element 2 will apply to Money Doubling Chance")]
     public MinorCardModiferContainer.MultiModifer tierElevenModifier;
-    [Tooltip("Expecting three modifiers. Element 0 will apply to Currency Drop Rate, Element 1 will apply to Discount On Purchase, and Element 2 will apply to Money Doubling Chance")]
+    [Tooltip("Expecting three modifiers. Element 0 will apply to Minor Arcana Drop Rate, Element 1 will apply to Discount On Purchase, and Element 2 will apply to Money Doubling Chance")]
     public MinorCardModiferContainer.MultiModifer tierTwelveModifier;
-    [Tooltip("Expecting three modifiers. Element 0 will apply to Currency Drop Rate, Element 1 will apply to Discount On Purchase, and Element 2 will apply to Money Doubling Chance")]
+    [Tooltip("Expecting three modifiers. Element 0 will apply to Minor Arcana Drop Rate, Element 1 will apply to Discount On Purchase, and Element 2 will apply to Money Doubling Chance")]
     public MinorCardModiferContainer.MultiModifer tierThirteenModifier;
-    [Tooltip("Expecting three modifiers. Element 0 will apply to Currency Drop Rate, Element 1 will apply to Discount On Purchase, and Element 2 will apply to Money Doubling Chance")]
+    [Tooltip("Expecting three modifiers. Element 0 will apply to Minor Arcana Drop Rate, Element 1 will apply to Discount On Purchase, and Element 2 will apply to Money Doubling Chance")]
     public MinorCardModiferContainer.MultiModifer tierFourteenModifier;
     protected StatModifier AddAPlayerModifier(MinorCardModiferContainer.MultiModifer modifer, int modIndex)
     {
@@ -64,7 +64,7 @@ public class PentaclesMinorCard : MinorCardBase
     private void Start()
     {
         var newStatModOne = AddAPlayerModifier(tierOneModifier, 0);
-        playerStats.CurrencyDropRate.AddModifier(newStatModOne);
+        playerStats.MinorArcanaDropRate.AddModifier(newStatModOne);
     }
 
     // Gets all the stats that this card modifies and returns the values are a string along with the name
@@ -72,10 +72,10 @@ public class PentaclesMinorCard : MinorCardBase
     {
         string result = "";
 
-        float currencyDropValue = Mathf.Abs(playerStats.CurrencyDropRate.Value - playerStats.CurrencyDropRate.BaseValue);
-        if (currencyDropValue != 0f) 
+        float minorArcanaDropValue = Mathf.Abs(playerStats.MinorArcanaDropRate.Value - playerStats.MinorArcanaDropRate.BaseValue);
+        if (minorArcanaDropValue != 0f) 
         {
-            result += "Currency Drop Bonus: \n+" + currencyDropValue.ToString("0.00") + " \n\n";
+            result += "Minor Arcana Drop Chance: \n+" + minorArcanaDropValue.ToString("0.00") + " \n\n";
         }
 
         float discountValue = Mathf.Abs(playerStats.DiscountOnPurchase.Value - playerStats.DiscountOnPurchase.BaseValue);
@@ -114,26 +114,26 @@ public class PentaclesMinorCard : MinorCardBase
 
             case MinorCardTier.TierTwo:
                 newStatModOne = AddAPlayerModifier(tierTwoModifier, 0);
-                playerStats.CurrencyDropRate.RemoveAllModifiersFromSource(this);
-                playerStats.CurrencyDropRate.AddModifier(newStatModOne);
+                playerStats.MinorArcanaDropRate.RemoveAllModifiersFromSource(this);
+                playerStats.MinorArcanaDropRate.AddModifier(newStatModOne);
                 break;
 
             case MinorCardTier.TierThree:
                 newStatModOne = AddAPlayerModifier(tierThreeModifier, 0);
-                playerStats.CurrencyDropRate.RemoveAllModifiersFromSource(this);
-                playerStats.CurrencyDropRate.AddModifier(newStatModOne);
+                playerStats.MinorArcanaDropRate.RemoveAllModifiersFromSource(this);
+                playerStats.MinorArcanaDropRate.AddModifier(newStatModOne);
                 break;
 
             case MinorCardTier.TierFour:
                 newStatModOne = AddAPlayerModifier(tierFourModifier, 0);
-                playerStats.CurrencyDropRate.RemoveAllModifiersFromSource(this);
-                playerStats.CurrencyDropRate.AddModifier(newStatModOne);
+                playerStats.MinorArcanaDropRate.RemoveAllModifiersFromSource(this);
+                playerStats.MinorArcanaDropRate.AddModifier(newStatModOne);
                 break;
 
             case MinorCardTier.TierFive:
                 newStatModOne = AddAPlayerModifier(tierFiveModifier, 0);
-                playerStats.CurrencyDropRate.RemoveAllModifiersFromSource(this);
-                playerStats.CurrencyDropRate.AddModifier(newStatModOne);
+                playerStats.MinorArcanaDropRate.RemoveAllModifiersFromSource(this);
+                playerStats.MinorArcanaDropRate.AddModifier(newStatModOne);
 
                 newStatModTwo = AddAPlayerModifier(tierFiveModifier, 1);
                 playerStats.DiscountOnPurchase.RemoveAllModifiersFromSource(this);
@@ -142,8 +142,8 @@ public class PentaclesMinorCard : MinorCardBase
 
             case MinorCardTier.TierSix:
                 newStatModOne = AddAPlayerModifier(tierSixModifier, 0);
-                playerStats.CurrencyDropRate.RemoveAllModifiersFromSource(this);
-                playerStats.CurrencyDropRate.AddModifier(newStatModOne);
+                playerStats.MinorArcanaDropRate.RemoveAllModifiersFromSource(this);
+                playerStats.MinorArcanaDropRate.AddModifier(newStatModOne);
 
                 newStatModTwo = AddAPlayerModifier(tierSixModifier, 1);
                 playerStats.DiscountOnPurchase.RemoveAllModifiersFromSource(this);
@@ -152,8 +152,8 @@ public class PentaclesMinorCard : MinorCardBase
 
             case MinorCardTier.TierSeven:
                 newStatModOne = AddAPlayerModifier(tierSevenModifier, 0);
-                playerStats.CurrencyDropRate.RemoveAllModifiersFromSource(this);
-                playerStats.CurrencyDropRate.AddModifier(newStatModOne);
+                playerStats.MinorArcanaDropRate.RemoveAllModifiersFromSource(this);
+                playerStats.MinorArcanaDropRate.AddModifier(newStatModOne);
 
                 newStatModTwo = AddAPlayerModifier(tierSevenModifier, 1);
                 playerStats.DiscountOnPurchase.RemoveAllModifiersFromSource(this);
@@ -162,8 +162,8 @@ public class PentaclesMinorCard : MinorCardBase
 
             case MinorCardTier.TierEight:
                 newStatModOne = AddAPlayerModifier(tierEightModifier, 0);
-                playerStats.CurrencyDropRate.RemoveAllModifiersFromSource(this);
-                playerStats.CurrencyDropRate.AddModifier(newStatModOne);
+                playerStats.MinorArcanaDropRate.RemoveAllModifiersFromSource(this);
+                playerStats.MinorArcanaDropRate.AddModifier(newStatModOne);
 
                 newStatModTwo = AddAPlayerModifier(tierEightModifier, 1);
                 playerStats.DiscountOnPurchase.RemoveAllModifiersFromSource(this);
@@ -172,8 +172,8 @@ public class PentaclesMinorCard : MinorCardBase
 
             case MinorCardTier.TierNine:
                 newStatModOne = AddAPlayerModifier(tierNineModifier, 0);
-                playerStats.CurrencyDropRate.RemoveAllModifiersFromSource(this);
-                playerStats.CurrencyDropRate.AddModifier(newStatModOne);
+                playerStats.MinorArcanaDropRate.RemoveAllModifiersFromSource(this);
+                playerStats.MinorArcanaDropRate.AddModifier(newStatModOne);
 
                 newStatModTwo = AddAPlayerModifier(tierNineModifier, 1);
                 playerStats.DiscountOnPurchase.RemoveAllModifiersFromSource(this);
@@ -182,8 +182,8 @@ public class PentaclesMinorCard : MinorCardBase
 
             case MinorCardTier.TierTen:
                 newStatModOne = AddAPlayerModifier(tierTenModifier, 0);
-                playerStats.CurrencyDropRate.RemoveAllModifiersFromSource(this);
-                playerStats.CurrencyDropRate.AddModifier(newStatModOne);
+                playerStats.MinorArcanaDropRate.RemoveAllModifiersFromSource(this);
+                playerStats.MinorArcanaDropRate.AddModifier(newStatModOne);
 
                 newStatModTwo = AddAPlayerModifier(tierTenModifier, 1);
                 playerStats.DiscountOnPurchase.RemoveAllModifiersFromSource(this);
@@ -196,8 +196,8 @@ public class PentaclesMinorCard : MinorCardBase
 
             case MinorCardTier.TierEleven:
                 newStatModOne = AddAPlayerModifier(tierElevenModifier, 0);
-                playerStats.CurrencyDropRate.RemoveAllModifiersFromSource(this);
-                playerStats.CurrencyDropRate.AddModifier(newStatModOne);
+                playerStats.MinorArcanaDropRate.RemoveAllModifiersFromSource(this);
+                playerStats.MinorArcanaDropRate.AddModifier(newStatModOne);
 
                 newStatModTwo = AddAPlayerModifier(tierElevenModifier, 1);
                 playerStats.DiscountOnPurchase.RemoveAllModifiersFromSource(this);
@@ -210,8 +210,8 @@ public class PentaclesMinorCard : MinorCardBase
 
             case MinorCardTier.TierTwelve:
                 newStatModOne = AddAPlayerModifier(tierTwelveModifier, 0);
-                playerStats.CurrencyDropRate.RemoveAllModifiersFromSource(this);
-                playerStats.CurrencyDropRate.AddModifier(newStatModOne);
+                playerStats.MinorArcanaDropRate.RemoveAllModifiersFromSource(this);
+                playerStats.MinorArcanaDropRate.AddModifier(newStatModOne);
 
                 newStatModTwo = AddAPlayerModifier(tierTwelveModifier, 1);
                 playerStats.DiscountOnPurchase.RemoveAllModifiersFromSource(this);
@@ -224,8 +224,8 @@ public class PentaclesMinorCard : MinorCardBase
 
             case MinorCardTier.TierThirteen:
                 newStatModOne = AddAPlayerModifier(tierThirteenModifier, 0);
-                playerStats.CurrencyDropRate.RemoveAllModifiersFromSource(this);
-                playerStats.CurrencyDropRate.AddModifier(newStatModOne);
+                playerStats.MinorArcanaDropRate.RemoveAllModifiersFromSource(this);
+                playerStats.MinorArcanaDropRate.AddModifier(newStatModOne);
 
                 newStatModTwo = AddAPlayerModifier(tierThirteenModifier, 1);
                 playerStats.DiscountOnPurchase.RemoveAllModifiersFromSource(this);
@@ -238,8 +238,8 @@ public class PentaclesMinorCard : MinorCardBase
 
             case MinorCardTier.TierFourteen:
                 newStatModOne = AddAPlayerModifier(tierFourteenModifier, 0);
-                playerStats.CurrencyDropRate.RemoveAllModifiersFromSource(this);
-                playerStats.CurrencyDropRate.AddModifier(newStatModOne);
+                playerStats.MinorArcanaDropRate.RemoveAllModifiersFromSource(this);
+                playerStats.MinorArcanaDropRate.AddModifier(newStatModOne);
 
                 newStatModTwo = AddAPlayerModifier(tierFourteenModifier, 1);
                 playerStats.DiscountOnPurchase.RemoveAllModifiersFromSource(this);
@@ -276,32 +276,32 @@ public class PentaclesMinorCard : MinorCardBase
         {
             case MinorCardTier.TierOne:
                 newStatModOne = AddAPlayerModifier(tierOneModifier, 0);
-                playerStats.CurrencyDropRate.RemoveAllModifiersFromSource(this);
-                playerStats.CurrencyDropRate.AddModifier(newStatModOne);
+                playerStats.MinorArcanaDropRate.RemoveAllModifiersFromSource(this);
+                playerStats.MinorArcanaDropRate.AddModifier(newStatModOne);
                 break;
 
             case MinorCardTier.TierTwo:
                 newStatModOne = AddAPlayerModifier(tierTwoModifier, 0);
-                playerStats.CurrencyDropRate.RemoveAllModifiersFromSource(this);
-                playerStats.CurrencyDropRate.AddModifier(newStatModOne);
+                playerStats.MinorArcanaDropRate.RemoveAllModifiersFromSource(this);
+                playerStats.MinorArcanaDropRate.AddModifier(newStatModOne);
                 break;
 
             case MinorCardTier.TierThree:
                 newStatModOne = AddAPlayerModifier(tierThreeModifier, 0);
-                playerStats.CurrencyDropRate.RemoveAllModifiersFromSource(this);
-                playerStats.CurrencyDropRate.AddModifier(newStatModOne);
+                playerStats.MinorArcanaDropRate.RemoveAllModifiersFromSource(this);
+                playerStats.MinorArcanaDropRate.AddModifier(newStatModOne);
                 break;
 
             case MinorCardTier.TierFour:
                 newStatModOne = AddAPlayerModifier(tierFourModifier, 0);
-                playerStats.CurrencyDropRate.RemoveAllModifiersFromSource(this);
-                playerStats.CurrencyDropRate.AddModifier(newStatModOne);
+                playerStats.MinorArcanaDropRate.RemoveAllModifiersFromSource(this);
+                playerStats.MinorArcanaDropRate.AddModifier(newStatModOne);
                 break;
 
             case MinorCardTier.TierFive:
                 newStatModOne = AddAPlayerModifier(tierFiveModifier, 0);
-                playerStats.CurrencyDropRate.RemoveAllModifiersFromSource(this);
-                playerStats.CurrencyDropRate.AddModifier(newStatModOne);
+                playerStats.MinorArcanaDropRate.RemoveAllModifiersFromSource(this);
+                playerStats.MinorArcanaDropRate.AddModifier(newStatModOne);
 
                 newStatModTwo = AddAPlayerModifier(tierFiveModifier, 1);
                 playerStats.DiscountOnPurchase.RemoveAllModifiersFromSource(this);
@@ -310,8 +310,8 @@ public class PentaclesMinorCard : MinorCardBase
 
             case MinorCardTier.TierSix:
                 newStatModOne = AddAPlayerModifier(tierSixModifier, 0);
-                playerStats.CurrencyDropRate.RemoveAllModifiersFromSource(this);
-                playerStats.CurrencyDropRate.AddModifier(newStatModOne);
+                playerStats.MinorArcanaDropRate.RemoveAllModifiersFromSource(this);
+                playerStats.MinorArcanaDropRate.AddModifier(newStatModOne);
 
                 newStatModTwo = AddAPlayerModifier(tierSixModifier, 1);
                 playerStats.DiscountOnPurchase.RemoveAllModifiersFromSource(this);
@@ -320,8 +320,8 @@ public class PentaclesMinorCard : MinorCardBase
 
             case MinorCardTier.TierSeven:
                 newStatModOne = AddAPlayerModifier(tierSevenModifier, 0);
-                playerStats.CurrencyDropRate.RemoveAllModifiersFromSource(this);
-                playerStats.CurrencyDropRate.AddModifier(newStatModOne);
+                playerStats.MinorArcanaDropRate.RemoveAllModifiersFromSource(this);
+                playerStats.MinorArcanaDropRate.AddModifier(newStatModOne);
 
                 newStatModTwo = AddAPlayerModifier(tierSevenModifier, 1);
                 playerStats.DiscountOnPurchase.RemoveAllModifiersFromSource(this);
@@ -330,8 +330,8 @@ public class PentaclesMinorCard : MinorCardBase
 
             case MinorCardTier.TierEight:
                 newStatModOne = AddAPlayerModifier(tierEightModifier, 0);
-                playerStats.CurrencyDropRate.RemoveAllModifiersFromSource(this);
-                playerStats.CurrencyDropRate.AddModifier(newStatModOne);
+                playerStats.MinorArcanaDropRate.RemoveAllModifiersFromSource(this);
+                playerStats.MinorArcanaDropRate.AddModifier(newStatModOne);
 
                 newStatModTwo = AddAPlayerModifier(tierEightModifier, 1);
                 playerStats.DiscountOnPurchase.RemoveAllModifiersFromSource(this);
@@ -340,8 +340,8 @@ public class PentaclesMinorCard : MinorCardBase
 
             case MinorCardTier.TierNine:
                 newStatModOne = AddAPlayerModifier(tierNineModifier, 0);
-                playerStats.CurrencyDropRate.RemoveAllModifiersFromSource(this);
-                playerStats.CurrencyDropRate.AddModifier(newStatModOne);
+                playerStats.MinorArcanaDropRate.RemoveAllModifiersFromSource(this);
+                playerStats.MinorArcanaDropRate.AddModifier(newStatModOne);
 
                 newStatModTwo = AddAPlayerModifier(tierNineModifier, 1);
                 playerStats.DiscountOnPurchase.RemoveAllModifiersFromSource(this);
@@ -352,8 +352,8 @@ public class PentaclesMinorCard : MinorCardBase
 
             case MinorCardTier.TierTen:
                 newStatModOne = AddAPlayerModifier(tierTenModifier, 0);
-                playerStats.CurrencyDropRate.RemoveAllModifiersFromSource(this);
-                playerStats.CurrencyDropRate.AddModifier(newStatModOne);
+                playerStats.MinorArcanaDropRate.RemoveAllModifiersFromSource(this);
+                playerStats.MinorArcanaDropRate.AddModifier(newStatModOne);
 
                 newStatModTwo = AddAPlayerModifier(tierTenModifier, 1);
                 playerStats.DiscountOnPurchase.RemoveAllModifiersFromSource(this);
@@ -366,8 +366,8 @@ public class PentaclesMinorCard : MinorCardBase
 
             case MinorCardTier.TierEleven:
                 newStatModOne = AddAPlayerModifier(tierElevenModifier, 0);
-                playerStats.CurrencyDropRate.RemoveAllModifiersFromSource(this);
-                playerStats.CurrencyDropRate.AddModifier(newStatModOne);
+                playerStats.MinorArcanaDropRate.RemoveAllModifiersFromSource(this);
+                playerStats.MinorArcanaDropRate.AddModifier(newStatModOne);
 
                 newStatModTwo = AddAPlayerModifier(tierElevenModifier, 1);
                 playerStats.DiscountOnPurchase.RemoveAllModifiersFromSource(this);
@@ -380,8 +380,8 @@ public class PentaclesMinorCard : MinorCardBase
 
             case MinorCardTier.TierTwelve:
                 newStatModOne = AddAPlayerModifier(tierTwelveModifier, 0);
-                playerStats.CurrencyDropRate.RemoveAllModifiersFromSource(this);
-                playerStats.CurrencyDropRate.AddModifier(newStatModOne);
+                playerStats.MinorArcanaDropRate.RemoveAllModifiersFromSource(this);
+                playerStats.MinorArcanaDropRate.AddModifier(newStatModOne);
 
                 newStatModTwo = AddAPlayerModifier(tierTwelveModifier, 1);
                 playerStats.DiscountOnPurchase.RemoveAllModifiersFromSource(this);
@@ -394,8 +394,8 @@ public class PentaclesMinorCard : MinorCardBase
 
             case MinorCardTier.TierThirteen:
                 newStatModOne = AddAPlayerModifier(tierThirteenModifier, 0);
-                playerStats.CurrencyDropRate.RemoveAllModifiersFromSource(this);
-                playerStats.CurrencyDropRate.AddModifier(newStatModOne);
+                playerStats.MinorArcanaDropRate.RemoveAllModifiersFromSource(this);
+                playerStats.MinorArcanaDropRate.AddModifier(newStatModOne);
 
                 newStatModTwo = AddAPlayerModifier(tierThirteenModifier, 1);
                 playerStats.DiscountOnPurchase.RemoveAllModifiersFromSource(this);

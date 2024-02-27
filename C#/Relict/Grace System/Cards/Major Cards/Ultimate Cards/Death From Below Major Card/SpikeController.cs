@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class SpikeController : MonoBehaviour
 {
-    [SerializeField] private float damageOutput = 50f;
+    [SerializeField] private float damageOutput = 45f;
     [SerializeField] private float moveSpeed = 0.1f;
     [SerializeField] private float moveUpValue = 2f;
 

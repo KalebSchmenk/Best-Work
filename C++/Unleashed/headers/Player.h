@@ -23,6 +23,20 @@ struct PlayerData
 	Item itemSlotFour;
 	Item itemSlotFive;
 	Item itemSlotSix;
+
+	PlayerData()
+	{
+		// Tell each item where their file is
+
+		playerSword.filePath = "Sword.txt";
+
+		itemSlotOne.filePath = "ItemOne.txt";
+		itemSlotTwo.filePath = "ItemTwo.txt";
+		itemSlotThree.filePath = "ItemThree.txt";
+		itemSlotFour.filePath = "ItemFour.txt";
+		itemSlotFive.filePath = "ItemFive.txt";
+		itemSlotSix.filePath = "ItemSix.txt";
+	}
 };
 
 class PlayerObj

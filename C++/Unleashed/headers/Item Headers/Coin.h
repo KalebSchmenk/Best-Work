@@ -2,7 +2,6 @@
 
 #include "Item Headers/Item.h"
 
-// TODO 
 class Coin : public Item
 {
 public:

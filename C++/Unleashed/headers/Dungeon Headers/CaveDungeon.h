@@ -13,6 +13,7 @@ class CaveDungeon : public Dungeon
 public:
 	DungeonDifficulty GetDifficulty() override;
 	bool StartDungeon(PlayerObj *player) override;
+	bool EndDungeon() override;
 
 	CaveDungeon(DungeonDifficulty difficulty);
 

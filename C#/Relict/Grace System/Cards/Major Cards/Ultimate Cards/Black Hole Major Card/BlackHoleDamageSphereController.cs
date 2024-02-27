@@ -6,7 +6,7 @@ using UnityEngine;
 public class BlackHoleDamageSphereController : MonoBehaviour
 {
     public float spawnDamageSphereEvery = 2.5f;
-    public float damageOutput = 15f;
+    public float damageOutput = 20f;
     public SphereCollider colliderRef;
 
     private float damageRadius;

@@ -14,7 +14,6 @@ public class SeededStatusEffect : StatusEffectBase
         base.AddEffect();
 
         playerHealthController = GameManager.instance.player.GetComponent<PlayerHealth>();
-
         this.OnEffectOutputDamage += ParentTakingDamage;
     }
 

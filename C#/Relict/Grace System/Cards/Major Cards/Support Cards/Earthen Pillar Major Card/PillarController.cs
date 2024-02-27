@@ -41,6 +41,19 @@ public class PillarController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Enemy"))
         {
+            if (collision.gameObject.layer == LayerMask.NameToLayer("Boss"))
+            {
+                ITakeDamage damageInterface;
+                collision.gameObject.TryGetComponent<ITakeDamage>(out damageInterface);
+
+                if (damageInterface != null)
+                {
+                    damageInterface.TakeDamage(collision.contacts[0].point, Color.white, damage, true);
+                }
+
+                Destroy(this.gameObject); // Boss destroyed this
+            }
+
             if (!moving) return; // Guard Clause
 
             bool goForLaunch = true; 
@@ -62,7 +75,7 @@ public class PillarController : MonoBehaviour
 
                 var obj = collision.gameObject;
                 var pillarToObj = obj.transform.position - this.transform.position;
-                pillarToObj.y = 0;
+                //pillarToObj.y = 0;
                 pillarToObj.Normalize();
 
                 ITakeDamage damageInterface;
@@ -78,7 +91,7 @@ public class PillarController : MonoBehaviour
 
                 if (launchInterface != null)
                 {
-                    launchInterface.Launch(pillarToObj, power * 1.5f, stunLength);
+                    launchInterface.Launch(pillarToObj, power, stunLength);
                 }
             }
         }

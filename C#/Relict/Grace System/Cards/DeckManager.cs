@@ -24,6 +24,12 @@ public class DeckManager : MonoBehaviour
     public Sprite cupsCard;
     public Sprite swordsCard;
 
+    [Header("Minor Card Drop Refs")]
+    public GameObject swordsDrop;
+    public GameObject wandsDrop;
+    public GameObject pentaclesDrop;
+    public GameObject cupsDrop;
+
 
     private void Awake()
     {
